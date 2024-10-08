@@ -18,6 +18,7 @@ OverlayEntry showAlertBanner(
   bool safeAreaBottomEnabled = true,
   bool safeAreaLeftEnabled = true,
   bool safeAreaRightEnabled = true,
+  VoidCallback? onDismiss,
 }) {
   OverlayEntry? overlay;
   overlay = OverlayEntry(
@@ -47,6 +48,7 @@ OverlayEntry showAlertBanner(
             overlay: overlay,
             duration:
                 durationOfStayingOnScreen ?? const Duration(milliseconds: 3500),
+            onDismiss: onDismiss,
             child: child,
           ),
         ),
@@ -72,6 +74,7 @@ class _OverlayItem extends StatefulWidget {
     required this.curveScaleUpAnim,
     required this.curveTranslateAnim,
     this.maxWidth,
+    this.onDismiss,
   }) : super(key: key);
 
   /// When the alert_banner gets tapped.
@@ -109,6 +112,8 @@ class _OverlayItem extends StatefulWidget {
 
   /// Curve of translation (moving on y-axis) animation.
   final Curve curveTranslateAnim;
+
+  final VoidCallback? onDismiss;
 
   @override
   State<_OverlayItem> createState() => __OverlayItemState();
@@ -162,7 +167,12 @@ class __OverlayItemState extends State<_OverlayItem>
   /// AKA: Hides the alert_banner via animation.
   void reverseAnimEarly() {
     if (!mounted || widget.overlay == null) return;
-    translateAnimController.forward().then((value) => widget.overlay!.remove());
+    translateAnimController.forward().then((value) {
+      if (widget.onDismiss != null) {
+        widget.onDismiss!();
+      }
+      widget.overlay!.remove();
+    });
     translateAnimController.addListener(() => setState(() {}));
   }
 
@@ -174,7 +184,12 @@ class __OverlayItemState extends State<_OverlayItem>
     scaleAnimController.forward().then((_) async {
       await Future.delayed(widget.duration);
       if (!mounted || widget.overlay == null) return;
-      scaleAnimController.reverse().then((value) => widget.overlay!.remove());
+      scaleAnimController.reverse().then((value) {
+        if (widget.onDismiss != null) {
+          widget.onDismiss!();
+        }
+        widget.overlay!.remove();
+      });
     });
     scaleAnimController.addListener(() => setState(() {}));
   }
