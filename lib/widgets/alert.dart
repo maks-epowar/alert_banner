@@ -1,7 +1,7 @@
 import 'package:alert_banner/exports.dart';
 import 'package:flutter/material.dart';
 
-dynamic showAlertBanner(
+OverlayEntry showAlertBanner(
   BuildContext context,
   VoidCallback onTap,
   Widget child, {
@@ -53,7 +53,8 @@ dynamic showAlertBanner(
       );
     },
   );
-  Overlay.of(context)?.insert(overlay);
+  Overlay.of(context).insert(overlay);
+  return overlay;
 }
 
 class _OverlayItem extends StatefulWidget {
