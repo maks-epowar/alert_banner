@@ -55,7 +55,7 @@ OverlayEntry showAlertBanner(
       );
     },
   );
-  Overlay.of(context).insert(overlay);
+  Navigator.of(context, rootNavigator: true).overlay?.insert(overlay);
   return overlay;
 }
 
